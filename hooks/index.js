@@ -195,7 +195,7 @@ export const useAuth = () => {
       return
     }
 
-    setState({ user: { ...user }})
+    setState({ user: { ...user } })
   }
 
   React.useEffect(() => {
