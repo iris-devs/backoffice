@@ -31,7 +31,7 @@ export default function Login() {
 
   return (
     <>
-      <Backdrop open={loading}>
+      <Backdrop open={loading} style={{ zIndex: 1 }}>
         <CircularProgress color="inherit"/>
       </Backdrop>
       <Snackbar
