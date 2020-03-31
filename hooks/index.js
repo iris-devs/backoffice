@@ -16,7 +16,7 @@ export const useQuestionSubscription = (roles = []) => {
     const question = await questionRef.get()
     const comment = { uid, body, authorName }
 
-    if (!question.exists) {
+    if (!question?.comment?.createdAt) {
       comment.createdAt = firebase.firestore.FieldValue.serverTimestamp()
     }
 
