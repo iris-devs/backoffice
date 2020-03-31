@@ -1,17 +1,25 @@
 import Button from '@material-ui/core/Button'
 import FormControl from '@material-ui/core/FormControl'
 import Grid from '@material-ui/core/Grid'
+import IconButton from '@material-ui/core/IconButton'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import Paper from '@material-ui/core/Paper'
 import Select from '@material-ui/core/Select'
 import { makeStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
+import DeleteIcon from '@material-ui/icons/Delete'
+import MaterialTable from 'material-table'
+import Link from 'next/link'
 import React from 'react'
 import { useManageTopics } from '../hooks'
 import { useAuth } from '../hooks/auth'
+import { formatFirebaseDate } from '../src/dateFormatter'
 import MarkdownEditor from '../src/MarkdownEditor'
-import Topics from '../src/Topics'
+import MessageStatusIcon from '../src/Message/MessageStatusIcon'
+import MessageTypeIcon from '../src/Message/MessageTypeIcon'
+import { PostEditModal } from '../src/Modal'
+import tableIcons from '../src/tableIcons'
 
 export default function Index() {
   const { user } = useAuth()
@@ -31,6 +39,12 @@ export default function Index() {
     setSummary('')
     createTopic(text, title, user.name, isPublished, summary, type)
   }
+
+  const data = Object.entries(messages)
+    .map(([id, message]) => ({
+      ...message,
+      id,
+    }))
 
   return (
     <Grid container spacing={3}>
@@ -98,18 +112,46 @@ export default function Index() {
             </form>
           </div>
         </Paper>
-      </Grid>
-      {/* topics table */}
-      <Grid item xs={12} md={8} lg={12}>
-        <Paper style={{ marginTop: 20, padding: 10 }}>
-          <div>
-            <Topics
-              topics={messages}
-              user={user}
-              deleteTopic={deleteTopic}
-            />
-          </div>
-        </Paper>
+        <MaterialTable
+          icons={tableIcons}
+          title="Messages"
+          columns={[
+            {
+              title: 'Status',
+              render: (message) => <MessageStatusIcon {...message} />,
+            },
+            {
+              title: 'Type',
+              render: ({ type }) => <MessageTypeIcon type={type}/>,
+            },
+            {
+              title: 'Date',
+              render: ({ createdAt }) => formatFirebaseDate(createdAt),
+            },
+            {
+              title: 'Title', render: ({ id, title }) => (
+                <Link href="/details/[id]" as={`/details/${id}`}>
+                  <a>{title}</a>
+                </Link>
+              ),
+            },
+            {
+              title: 'Actions', render: (message) => {
+                return <>
+                  {message.author === user.uid && !message.isDeleted && (
+                    <IconButton aria-label="delete" className={classes.margin} onClick={() => deleteTopic(message.id)}>
+                      <DeleteIcon fontSize="small"/>
+                    </IconButton>
+                  )}
+                  {message.author === user.uid && (
+                    <PostEditModal topic={message} user={user}/>
+                  )}
+                </>
+              },
+            },
+          ]}
+          data={data}
+        />
       </Grid>
     </Grid>
   )

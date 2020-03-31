@@ -35,8 +35,7 @@ export const useQuestionSubscription = (user) => {
 
     return getCollectionRef('questions')
       .where('roles', 'array-contains-any', roles)
-      .onSnapshot(
-        querySnapshot => {
+      .onSnapshot(querySnapshot => {
           const messages = {}
           querySnapshot.forEach(function (doc) {
             messages[doc.id] = doc.data()
@@ -51,12 +50,12 @@ export const useQuestionSubscription = (user) => {
 }
 
 export const useCommentsSubscription = id => {
-  const [comments, setComments] = React.useState([])
+  const [comments, setComments] = useState([])
   if (!id) {
     setComments([])
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     // listen for auth state changes
     let unsubscribe = getCollectionRef('comments')
       .where('parentId', '==', id)
@@ -88,12 +87,12 @@ export const useCommentsSubscription = id => {
 }
 
 export const useTopicSubscription = id => {
-  const [topic, setTopic] = React.useState('')
+  const [topic, setTopic] = useState('')
   if (!id) {
     setTopic('')
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     // listen for auth state changes
     let unsubscribe = getCollectionRef('messages')
       .doc(id)
