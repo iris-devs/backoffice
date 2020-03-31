@@ -12,7 +12,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import Badge from "@material-ui/core/Badge";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import NotificationsIcon from "@material-ui/icons/Notifications";
-import { mainListItems, secondaryListItems } from "../../src/listItems";
+import { MainMenu, secondaryListItems } from "../../src/MainMenu";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import Grid from "@material-ui/core/Grid";
@@ -95,7 +95,7 @@ export default function Detail({ id }) {
           </IconButton>
         </div>
         <Divider />
-        <List>{mainListItems}</List>
+        <List>{MainMenu}</List>
         <Divider />
         <List>{secondaryListItems}</List>
       </Drawer>

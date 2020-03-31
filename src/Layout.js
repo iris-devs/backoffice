@@ -17,7 +17,7 @@ import firebase from 'firebase'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import Copyright from './Copyright'
-import { mainListItems, secondaryListItems } from './listItems'
+import { MainMenu, MENU_ITEMS } from './MainMenu'
 
 const useToggle = (initialValue = false) => {
   const [value, setValue] = useState(initialValue)
@@ -31,6 +31,9 @@ const useToggle = (initialValue = false) => {
 
 export default function Layout({ children }) {
   const router = useRouter()
+  const currentRoute = router.pathname;
+  const title = MENU_ITEMS.find(({ route }) => route === currentRoute)?.title;
+
   const classes = useStyles()
   const [isDrawerOpen, { toggle: drawerToggle }] = useToggle(true)
 
@@ -69,7 +72,7 @@ export default function Layout({ children }) {
             noWrap
             className={classes.title}
           >
-            Dashboard
+            {title ?? 'Dashboard'}
           </Typography>
           <IconButton color="inherit">
             <Badge badgeContent={4} color="secondary">
@@ -95,16 +98,18 @@ export default function Layout({ children }) {
           </IconButton>
         </div>
         <Divider/>
-        <List>{mainListItems}</List>
-        <Divider/>
-        <List>{secondaryListItems}</List>
+        <List>
+          <MainMenu/>
+        </List>
+        {/*<Divider/>*/}
+        {/*<List>{secondaryListItems}</List>*/}
       </Drawer>
       <main className={classes.content}>
-        <div className={classes.appBarSpacer} />
+        <div className={classes.appBarSpacer}/>
         <Container maxWidth="lg" className={classes.container}>
           {children}
         </Container>
-        <Copyright />
+        <Copyright/>
       </main>
     </div>
   )
