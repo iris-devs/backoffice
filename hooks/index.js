@@ -16,11 +16,11 @@ export const useQuestionSubscription = (roles = []) => {
     const question = await questionRef.get()
     let comment = { uid, body, authorName, createdAt: firebase.firestore.FieldValue.serverTimestamp() }
 
-    const questionData = question.data();
+    const questionData = question.data()
     if (questionData?.comment) {
       comment = {
         ...questionData.comment,
-        body
+        body,
       }
     }
 
@@ -28,8 +28,11 @@ export const useQuestionSubscription = (roles = []) => {
   }
 
   useEffect(() => {
-    if (!roles.length) return;
-    let unsubscribe = getCollectionRef('questions')
+    if (!roles.length) {
+      return
+    }
+
+    return getCollectionRef('questions')
       .where('roles', 'array-contains-any', roles)
       .onSnapshot(
         querySnapshot => {
@@ -40,7 +43,6 @@ export const useQuestionSubscription = (roles = []) => {
           if (messages) setQuestions(messages)
         },
         error => {
-          typeof unsubscribe === 'function' && unsubscribe()
           console.error(error)
         },
       )
