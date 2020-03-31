@@ -36,9 +36,8 @@ export default ({ dataSource }) => {
               <TableCell>Title</TableCell>
               <TableCell>Author</TableCell>
               <TableCell>Created At</TableCell>
-              <TableCell>Likes</TableCell>
-              <TableCell>Answered</TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell align="center">Likes</TableCell>
+              <TableCell align="center">Answered</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -58,17 +57,16 @@ export default ({ dataSource }) => {
                   </TableCell>
                   <TableCell>{authorName}</TableCell>
                   <TableCell>{formatFirebaseDate(createdAt)}</TableCell>
-                  <TableCell>{likes}</TableCell>
-                  <TableCell>
+                  <TableCell align="center">{likes}</TableCell>
+                  <TableCell align="center">
                     {comment
                       ? <CheckCircleIcon style={{ color: green[500] }} fontSize="small"/>
                       : <CancelIcon style={{ color: red[500] }} fontSize="small"/>}
                   </TableCell>
-                  <TableCell/>
                 </TableRow>
                 {expanded === id && (
                   <TableRow style={{ backgroundColor: '#fafafa' }}>
-                    <TableCell colSpan={6}>
+                    <TableCell colSpan={5}>
                       <div>{body}</div>
                       <AnswerForm
                         questionId={id}
