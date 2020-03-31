@@ -115,6 +115,9 @@ export default function Index() {
         <MaterialTable
           icons={tableIcons}
           title="Messages"
+          options={{
+            sorting: true,
+          }}
           columns={[
             {
               title: 'Status',
@@ -127,6 +130,8 @@ export default function Index() {
             {
               title: 'Date',
               render: ({ createdAt }) => formatFirebaseDate(createdAt),
+              field: 'createdAt',
+              customSort: (a, b) => (a.createdAt?.seconds ?? 0) - (b.createdAt?.seconds ?? 0),
             },
             {
               title: 'Title', render: ({ id, title }) => (
@@ -134,8 +139,10 @@ export default function Index() {
                   <a>{title}</a>
                 </Link>
               ),
+              customSort: (a, b) => a.title.localeCompare(b.title, undefined, { sensitivity: 'base' }),
             },
             {
+              sorting: false,
               title: 'Actions', render: (message) => {
                 return <>
                   {message.author === user.uid && !message.isDeleted && (
