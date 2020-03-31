@@ -31,10 +31,6 @@ export default function Index() {
     createTopic(text, title, user.name, isPublished, summary, type)
   }
 
-  if (!user) {
-    return 'Authenticating...'
-  }
-
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} md={8} lg={12}>
