@@ -12,29 +12,16 @@ function getCollectionRef(name) {
 export const useQuestionSubscription = () => {
   const [questions, setQuestions] = React.useState([])
 
-  const reply = (questionId, body, authorName, userId) => {
-    const q = getCollectionRef('questions')
-      .doc(`${questionId}`)
-      .get()
-      .then(snapshot => {
-        const msg = snapshot.data()
-        console.log(msg)
-        if (!msg.comment) {
-          console.log('creating new reply')
-          getCollectionRef('questions')
-            .doc(`${questionId}`)
-            .update({
-              comment: {
-                body,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                authorName,
-                uid: userId,
-              },
-            })
-          return
-        }
-        getCollectionRef('questions').doc(`${questionId}`).update({ 'comment.body': body })
-      })
+  const reply = async (questionId, { body, authorName, uid }) => {
+    const questionRef = await getCollectionRef('questions').doc(questionId)
+    const question = await questionRef.get()
+    const comment = { uid, body, authorName }
+
+    if (!question.exists) {
+      comment.createdAt = firebase.firestore.FieldValue.serverTimestamp()
+    }
+
+    await questionRef.set({ comment }, { merge: true })
   }
 
   React.useEffect(() => {
@@ -52,6 +39,7 @@ export const useQuestionSubscription = () => {
       },
     )
   }, [])
+
   return { questions, reply }
 }
 
