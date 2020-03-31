@@ -19,10 +19,10 @@ export default ({ questionId, comment, onCancel }) => {
       await reply(questionId, {
         body,
         uid: user.uid,
-        authorName: user.displayName,
+        authorName: user.fullName ?? user.uid,
       })
     } catch (error) {
-      setError(error)
+      setError(error.message)
     } finally {
       setSaving(false)
     }
