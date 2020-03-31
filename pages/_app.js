@@ -4,14 +4,18 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 import 'react-mde/lib/styles/css/react-mde-all.css'
+import { useAuth } from '../hooks'
+
+import initFirebase from '../src/firebase'
+import FullscreenCenteredBlock from '../src/FullscreenCenteredBlock'
 import Layout from '../src/Layout'
 import theme from '../src/theme'
 
-import initFirebase from '../src/firebase'
-initFirebase();
+initFirebase()
 
 export default function App({ Component, pageProps }) {
-  const router = useRouter();
+  const router = useRouter()
+  const currentRoute = router.pathname
 
   useEffect(() => {
     const jssStyles = document.querySelector('#jss-server-side')
@@ -20,7 +24,7 @@ export default function App({ Component, pageProps }) {
     }
   }, [])
 
-
+  const { user } = useAuth()
 
   return (
     <>
@@ -30,9 +34,17 @@ export default function App({ Component, pageProps }) {
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline/>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        {currentRoute === '/login' ? (
+          <Component {...pageProps}/>
+        ) : (
+          user ? (
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          ) : (
+            <FullscreenCenteredBlock>Loading...</FullscreenCenteredBlock>
+          )
+        )}
       </ThemeProvider>
     </>
   )
