@@ -1,19 +1,25 @@
 import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
-import MessageIcon from '@material-ui/icons/Message'
+import NewReleasesIcon from '@material-ui/icons/NewReleases'
+import PeopleIcon from '@material-ui/icons/People'
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer'
 import { useRouter } from 'next/router'
 import React from 'react'
 
 export const MENU_ITEMS = [{
   title: 'Messages',
-  icon: <MessageIcon/>,
+  icon: <NewReleasesIcon/>,
   route: '/',
 }, {
   title: 'Questions',
+  // subTitle: 'and answers',
   icon: <QuestionAnswerIcon/>,
   route: '/questions',
+}, {
+  title: 'Users',
+  icon: <PeopleIcon />,
+  route: '/users',
 }]
 
 export const MainMenu = () => {
@@ -22,14 +28,14 @@ export const MainMenu = () => {
 
   return (
     <div>
-      {MENU_ITEMS.map(({ title, icon, route }) => (
+      {MENU_ITEMS.map(({ title, icon, route, subTitle }) => (
         <ListItem
           selected={currentRoute === route}
           key={title}
           button
           onClick={() => router.push(route)}>
           {icon && (<ListItemIcon>{icon}</ListItemIcon>)}
-          <ListItemText primary={title}/>
+          <ListItemText primary={title} secondary={subTitle}/>
         </ListItem>
       ))}
     </div>
