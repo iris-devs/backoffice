@@ -14,7 +14,7 @@ import Link from 'next/link'
 import React from 'react'
 import { useManageTopics } from '../hooks'
 import { useAuth } from '../hooks/auth'
-import { formatFirebaseDate } from '../src/dateFormatter'
+import { dateFromFirebase } from '../src/dateFormatter'
 import MarkdownEditor from '../src/MarkdownEditor'
 import MessageStatusIcon from '../src/Message/MessageStatusIcon'
 import MessageTypeIcon from '../src/Message/MessageTypeIcon'
@@ -44,11 +44,62 @@ export default function Index() {
     .map(([id, message]) => ({
       ...message,
       id,
+      createdAt: dateFromFirebase(message.createdAt),
     }))
 
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} md={8} lg={12}>
+        <MaterialTable
+          icons={tableIcons}
+          title="Messages"
+          options={{
+            filtering: true,
+            sorting: true,
+          }}
+          columns={[
+            {
+              title: 'Status',
+              render: (message) => <MessageStatusIcon {...message} />,
+            },
+            {
+              title: 'Type',
+              render: ({ type }) => <MessageTypeIcon type={type}/>,
+            },
+            {
+              title: 'Date',
+              field: 'createdAt',
+              type: 'date',
+              render: ({ createdAt }) => createdAt.toLocaleString(),
+            },
+            {
+              title: 'Title',
+              field: 'title',
+              render: ({ id, title }) => (
+                <Link href="/details/[id]" as={`/details/${id}`}>
+                  <a>{title}</a>
+                </Link>
+              ),
+              customSort: (a, b) => a.title.localeCompare(b.title, undefined, { sensitivity: 'base' }),
+            },
+            {
+              sorting: false,
+              title: 'Actions', render: (message) => {
+                return <>
+                  {message.author === user.uid && !message.isDeleted && (
+                    <IconButton aria-label="delete" className={classes.margin} onClick={() => deleteTopic(message.id)}>
+                      <DeleteIcon fontSize="small"/>
+                    </IconButton>
+                  )}
+                  {message.author === user.uid && (
+                    <PostEditModal topic={message} user={user}/>
+                  )}
+                </>
+              },
+            },
+          ]}
+          data={data}
+        />
         <Paper style={{ marginTop: 20, padding: 10 }}>
           <div>
             <form onSubmit={submitTopic}>
@@ -112,53 +163,7 @@ export default function Index() {
             </form>
           </div>
         </Paper>
-        <MaterialTable
-          icons={tableIcons}
-          title="Messages"
-          options={{
-            sorting: true,
-          }}
-          columns={[
-            {
-              title: 'Status',
-              render: (message) => <MessageStatusIcon {...message} />,
-            },
-            {
-              title: 'Type',
-              render: ({ type }) => <MessageTypeIcon type={type}/>,
-            },
-            {
-              title: 'Date',
-              render: ({ createdAt }) => formatFirebaseDate(createdAt),
-              field: 'createdAt',
-              customSort: (a, b) => (a.createdAt?.seconds ?? 0) - (b.createdAt?.seconds ?? 0),
-            },
-            {
-              title: 'Title', render: ({ id, title }) => (
-                <Link href="/details/[id]" as={`/details/${id}`}>
-                  <a>{title}</a>
-                </Link>
-              ),
-              customSort: (a, b) => a.title.localeCompare(b.title, undefined, { sensitivity: 'base' }),
-            },
-            {
-              sorting: false,
-              title: 'Actions', render: (message) => {
-                return <>
-                  {message.author === user.uid && !message.isDeleted && (
-                    <IconButton aria-label="delete" className={classes.margin} onClick={() => deleteTopic(message.id)}>
-                      <DeleteIcon fontSize="small"/>
-                    </IconButton>
-                  )}
-                  {message.author === user.uid && (
-                    <PostEditModal topic={message} user={user}/>
-                  )}
-                </>
-              },
-            },
-          ]}
-          data={data}
-        />
+
       </Grid>
     </Grid>
   )
