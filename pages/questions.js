@@ -6,7 +6,7 @@ import QuestionList from '../src/Question/QuestionList'
 
 export default function Questions({}) {
   const { user } = useAuth();
-  const { questions } = useQuestionSubscription(user?.roles ?? [])
+  const { questions } = useQuestionSubscription(user)
 
   const dataSource = Object
     .entries(questions)

@@ -8,7 +8,8 @@ function getCollectionRef(name) {
   return firebase.firestore().collection(name)
 }
 
-export const useQuestionSubscription = (roles = []) => {
+export const useQuestionSubscription = (user) => {
+  const roles = user?.roles ?? []
   const [questions, setQuestions] = useState([])
 
   const reply = async (questionId, { body, authorName, uid }) => {
@@ -34,17 +35,14 @@ export const useQuestionSubscription = (roles = []) => {
 
     return getCollectionRef('questions')
       .where('roles', 'array-contains-any', roles)
-      .onSnapshot(
-        querySnapshot => {
+      .onSnapshot(querySnapshot => {
           const messages = {}
           querySnapshot.forEach(function (doc) {
             messages[doc.id] = doc.data()
           })
           if (messages) setQuestions(messages)
         },
-        error => {
-          console.error(error)
-        },
+        error => console.error(error),
       )
   }, [roles])
 
@@ -52,12 +50,12 @@ export const useQuestionSubscription = (roles = []) => {
 }
 
 export const useCommentsSubscription = id => {
-  const [comments, setComments] = React.useState([])
+  const [comments, setComments] = useState([])
   if (!id) {
     setComments([])
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     // listen for auth state changes
     let unsubscribe = getCollectionRef('comments')
       .where('parentId', '==', id)
@@ -89,12 +87,12 @@ export const useCommentsSubscription = id => {
 }
 
 export const useTopicSubscription = id => {
-  const [topic, setTopic] = React.useState('')
+  const [topic, setTopic] = useState('')
   if (!id) {
     setTopic('')
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     // listen for auth state changes
     let unsubscribe = getCollectionRef('messages')
       .doc(id)
@@ -121,49 +119,55 @@ export const useTopicSubscription = id => {
 }
 
 export const useManageTopics = user => {
-  const [messages, setMessages] = React.useState([])
-  const createTopic = (text, title, authorName, isPublished = true, summary, type) => {
-    getCollectionRef('messages').add({
+  const [messages, setMessages] = useState([])
+  const createTopic = async (text, title, authorName, isPublished = true, summary, type) => {
+    return await getCollectionRef('messages').add({
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       text,
       title,
       summary,
       type,
       author: user.uid,
-      up: 0,
-      down: 0,
+      up: 0, down: 0,
       authorName,
       isPublished,
       isDeleted: false,
     })
   }
 
-  const deleteTopic = id => {
-    getCollectionRef('messages').doc(`${id}`).update({ isDeleted: true, isPublished: false })
+  const deleteTopic = async id => {
+    return await getCollectionRef('messages')
+      .doc(`${id}`)
+      .update({ isDeleted: true, isPublished: false })
   }
 
-  const updateTopic = (id, title, text, isPublished = true, summary, type) => {
-    getCollectionRef('messages').doc(`${id}`).update({ title, text, isPublished, summary, type })
+  const updateTopic = async (id, title, text, isPublished = true, summary, type) => {
+    return await getCollectionRef('messages')
+      .doc(`${id}`)
+      .update({ title, text, isPublished, summary, type })
   }
 
-  React.useEffect(() => {
-    // listen for auth state changes
-    let unsubscribe = getCollectionRef('messages').onSnapshot(
-      querySnapshot => {
-        const messages = {}
-        querySnapshot.forEach(function (doc) {
-          messages[doc.id] = doc.data()
-        })
-        if (messages) setMessages(messages)
-      },
-      error => {
-        unsubscribe()
-        console.error(error)
-      },
-    )
-    // unsubscribe to the listener when unmounting
-    return () => unsubscribe()
-  }, [])
+  const roles = user?.roles ?? []
+  useEffect(() => {
+    if (!roles.length) {
+      return
+    }
+
+    return getCollectionRef('messages')
+      .where('roles', 'array-contains-any', roles)
+      .onSnapshot(querySnapshot => {
+          const messages = querySnapshot.docs.reduce((result, doc) => ({
+            ...result,
+            [doc.id]: doc.data(),
+          }), {})
+
+          if (messages) {
+            setMessages(messages)
+          }
+        },
+        error => console.error(error),
+      )
+  }, [roles])
 
   return {
     createTopic,

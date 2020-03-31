@@ -13,9 +13,8 @@ import ExpandLessIcon from '@material-ui/icons/ExpandLess'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
 import React, { useState } from 'react'
+import { formatFirebaseDate } from '../dateFormatter'
 import AnswerForm from './AnswerForm'
-
-const formatFirebaseDate = (date) => new Date(date.seconds * 1000).toLocaleString()
 
 export default ({ dataSource }) => {
   const [expanded, setExpanded] = useState(null)
