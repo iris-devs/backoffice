@@ -46,6 +46,10 @@ npm run dev
 2. Upload Secrets from local [.env](.env] file using `scripts/upload-secrets-to-zeit-now.sh`
 3. Run `now`
 
+### Resources
+
+- [zeit.co/iris-devs/backoffice](https://zeit.co/iris-devs/backoffice)
+
 ## Libraries
 
 - [Firebase](https://firebase.google.com/) for database and authentication
