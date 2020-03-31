@@ -1,10 +1,12 @@
 import Grid from '@material-ui/core/Grid'
 import React from 'react'
 import { useQuestionSubscription } from '../hooks'
+import { useAuth } from '../hooks/auth'
 import QuestionList from '../src/Question/QuestionList'
 
 export default function Questions({}) {
-  const { questions } = useQuestionSubscription()
+  const { user } = useAuth();
+  const { questions } = useQuestionSubscription(user?.roles ?? [])
 
   const dataSource = Object
     .entries(questions)

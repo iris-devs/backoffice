@@ -2,15 +2,14 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
 import 'isomorphic-unfetch'
-import { useRouter } from 'next/router'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 function getCollectionRef(name) {
   return firebase.firestore().collection(name)
 }
 
-export const useQuestionSubscription = () => {
-  const [questions, setQuestions] = React.useState([])
+export const useQuestionSubscription = (roles = []) => {
+  const [questions, setQuestions] = useState([])
 
   const reply = async (questionId, { body, authorName, uid }) => {
     const questionRef = await getCollectionRef('questions').doc(questionId)
@@ -24,21 +23,24 @@ export const useQuestionSubscription = () => {
     await questionRef.set({ comment }, { merge: true })
   }
 
-  React.useEffect(() => {
-    let unsubscribe = getCollectionRef('questions').onSnapshot(
-      querySnapshot => {
-        const messages = {}
-        querySnapshot.forEach(function (doc) {
-          messages[doc.id] = doc.data()
-        })
-        if (messages) setQuestions(messages)
-      },
-      error => {
-        typeof unsubscribe === 'function' && unsubscribe()
-        console.error(error)
-      },
-    )
-  }, [])
+  useEffect(() => {
+    if (!roles.length) return;
+    let unsubscribe = getCollectionRef('questions')
+      .where('roles', 'array-contains-any', roles)
+      .onSnapshot(
+        querySnapshot => {
+          const messages = {}
+          querySnapshot.forEach(function (doc) {
+            messages[doc.id] = doc.data()
+          })
+          if (messages) setQuestions(messages)
+        },
+        error => {
+          typeof unsubscribe === 'function' && unsubscribe()
+          console.error(error)
+        },
+      )
+  }, [roles])
 
   return { questions, reply }
 }
@@ -165,31 +167,3 @@ export const useManageTopics = user => {
   }
 }
 
-export const useAuth = () => {
-  const router = useRouter()
-
-  const [state, setState] = React.useState(() => {
-    const user = firebase.auth().currentUser || null
-    const initialState = {}
-    if (user) {
-      initialState.user = { uid: user.uid }
-    }
-    return initialState
-  })
-
-  function onChange(user) {
-    if (!user) {
-      router.push('/login')
-      return
-    }
-
-    setState({ user: { ...user } })
-  }
-
-  React.useEffect(() => {
-    const unsubscribe = firebase.auth().onAuthStateChanged(onChange)
-    return () => unsubscribe()
-  }, [])
-
-  return state
-}

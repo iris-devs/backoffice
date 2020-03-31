@@ -12,12 +12,13 @@ import MenuIcon from "@material-ui/icons/Menu";
 import Badge from "@material-ui/core/Badge";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import NotificationsIcon from "@material-ui/icons/Notifications";
+import { useAuth } from '../../hooks/auth'
 import { MainMenu, secondaryListItems } from "../../src/MainMenu";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import { useAuth, signOut, useTopicSubscription, useCommentsSubscription } from "../../hooks";
+import { signOut, useTopicSubscription, useCommentsSubscription } from "../../hooks";
 import FeaturedPost from "../../src/FeaturedPost";
 import Questions from "../../src/Questions";
 import Copyright from "../../src/Copyright";

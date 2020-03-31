@@ -3,7 +3,8 @@ import Snackbar from '@material-ui/core/Snackbar'
 import TextField from '@material-ui/core/TextField'
 import Alert from '@material-ui/lab/Alert'
 import React, { useState } from 'react'
-import { useAuth, useQuestionSubscription } from '../../hooks'
+import { useQuestionSubscription } from '../../hooks'
+import { useAuth } from '../../hooks/auth'
 
 export default ({ questionId, comment, onCancel }) => {
   const [saving, setSaving] = useState(false)

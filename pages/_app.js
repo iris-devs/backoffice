@@ -4,8 +4,8 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 import 'react-mde/lib/styles/css/react-mde-all.css'
-import { useAuth } from '../hooks'
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { useAuth } from '../hooks/auth'
 
 import initFirebase from '../src/firebase'
 import FullscreenCenteredBlock from '../src/FullscreenCenteredBlock'
