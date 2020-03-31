@@ -48,7 +48,7 @@ npm run dev
 
 ## Libraries
 
-[Firebase](https://firebase.google.com/) for database and authentication
-[Zeit Now](https://zeit.co/) for hosting server and client code
-[Next.js](https://github.com/zeit/next.js) is a framework for server-rendered React apps
-[Material UI](https://github.com/mui-org/material-ui) for UI
+- [Firebase](https://firebase.google.com/) for database and authentication
+- [Zeit Now](https://zeit.co/) for hosting server and client code
+- [Next.js](https://github.com/zeit/next.js) is a framework for server-rendered React apps
+- [Material UI](https://github.com/mui-org/material-ui) for UI
