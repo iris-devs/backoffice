@@ -1,7 +1,6 @@
 import { green, red } from '@material-ui/core/colors'
 import IconButton from '@material-ui/core/IconButton'
 import Paper from '@material-ui/core/Paper'
-import { makeStyles } from '@material-ui/core/styles'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
@@ -10,21 +9,15 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import CancelIcon from '@material-ui/icons/Cancel'
 import CheckCircleIcon from '@material-ui/icons/CheckCircle'
+import ExpandLessIcon from '@material-ui/icons/ExpandLess'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
 import React, { useState } from 'react'
 import AnswerForm from './AnswerForm'
 
 const formatFirebaseDate = (date) => new Date(date.seconds * 1000).toLocaleString()
-const useStyles = makeStyles((theme) => ({
-  margin: {
-    margin: theme.spacing(1),
-  },
-}))
 
 export default ({ dataSource }) => {
-  const classes = useStyles()
   const [expanded, setExpanded] = useState(null)
 
   return (
