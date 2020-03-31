@@ -4,23 +4,15 @@ import "firebase/auth";
 import "firebase/firestore";
 import "isomorphic-unfetch";
 
-const db = firebase.firestore();
-const messagesRef = db.collection("messages");
-const commentsRef = db.collection("comments");
-const questionsRef = db.collection("questions");
-
-export const useCollections = () => {
-  return {
-    messagesRef,
-    commentsRef
-  };
-};
+function getCollectionRef(name) {
+  return firebase.firestore().collection(name);
+}
 
 export const useQuestionSubscription = () => {
   const [questions, setQuestions] = React.useState([]);
 
   const reply = (questionId, body, authorName, userId) => {
-    const q = questionsRef
+    const q = getCollectionRef('questions')
       .doc(`${questionId}`)
       .get()
       .then(snapshot => {
@@ -28,7 +20,7 @@ export const useQuestionSubscription = () => {
         console.log(msg);
         if (!msg.comment) {
           console.log("creating new reply");
-          questionsRef
+          getCollectionRef('questions')
             .doc(`${questionId}`)
             .update({
               comment: {
@@ -40,12 +32,12 @@ export const useQuestionSubscription = () => {
             });
           return;
         }
-        questionsRef.doc(`${questionId}`).update({'comment.body': body})
+        getCollectionRef('questions').doc(`${questionId}`).update({'comment.body': body})
       });
   };
 
   React.useEffect(() => {
-    let unsubscribe = questionsRef.onSnapshot(
+    let unsubscribe = getCollectionRef('questions').onSnapshot(
       querySnapshot => {
         const messages = {};
         querySnapshot.forEach(function(doc) {
@@ -70,7 +62,7 @@ export const useCommentsSubscription = id => {
 
   React.useEffect(() => {
     // listen for auth state changes
-    let unsubscribe = commentsRef
+    let unsubscribe = getCollectionRef('comments')
       .where("parentId", "==", id)
       .orderBy("up", "desc")
       .onSnapshot(
@@ -107,7 +99,7 @@ export const useTopicSubscription = id => {
 
   React.useEffect(() => {
     // listen for auth state changes
-    let unsubscribe = messagesRef
+    let unsubscribe = getCollectionRef('messages')
       .doc(id)
       .get()
       .then(snapshot => {
@@ -134,7 +126,7 @@ export const useTopicSubscription = id => {
 export const useManageTopics = user => {
   const [messages, setMessages] = React.useState([]);
   const createTopic = (text, title, authorName, isPublished = true, summary, type) => {
-    messagesRef.add({
+    getCollectionRef('messages').add({
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       text,
       title,
@@ -150,16 +142,16 @@ export const useManageTopics = user => {
   };
 
   const deleteTopic = id => {
-    messagesRef.doc(`${id}`).update({ isDeleted: true, isPublished: false });
+    getCollectionRef('messages').doc(`${id}`).update({ isDeleted: true, isPublished: false });
   };
 
   const updateTopic = (id, title, text, isPublished = true, summary, type) => {
-    messagesRef.doc(`${id}`).update({ title, text, isPublished, summary, type });
+    getCollectionRef('messages').doc(`${id}`).update({ title, text, isPublished, summary, type });
   };
 
   React.useEffect(() => {
     // listen for auth state changes
-    let unsubscribe = messagesRef.onSnapshot(
+    let unsubscribe = getCollectionRef('messages').onSnapshot(
       querySnapshot => {
         const messages = {};
         querySnapshot.forEach(function(doc) {
@@ -183,17 +175,6 @@ export const useManageTopics = user => {
     updateTopic
   };
 };
-
-
-
-export const signOut = () => {
-  firebase
-    .auth()
-    .signOut()
-    .catch((e) => {
-      console.error(e)
-    })
-}
 
 export const useAuth = () => {
   const [state, setState] = React.useState(() => {

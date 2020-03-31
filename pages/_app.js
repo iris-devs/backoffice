@@ -1,20 +1,26 @@
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { ThemeProvider } from '@material-ui/core/styles'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 import 'react-mde/lib/styles/css/react-mde-all.css'
+import Layout from '../src/Layout'
 import theme from '../src/theme'
 
 import initFirebase from '../src/firebase'
 initFirebase();
 
 export default function App({ Component, pageProps }) {
+  const router = useRouter();
+
   useEffect(() => {
     const jssStyles = document.querySelector('#jss-server-side')
     if (jssStyles) {
       jssStyles.parentElement.removeChild(jssStyles)
     }
   }, [])
+
+
 
   return (
     <>
@@ -24,7 +30,9 @@ export default function App({ Component, pageProps }) {
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline/>
-        <Component {...pageProps} />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
       </ThemeProvider>
     </>
   )
