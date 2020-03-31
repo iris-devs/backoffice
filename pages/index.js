@@ -49,7 +49,7 @@ export default function Index() {
 
   return (
     <Grid container spacing={3}>
-      <Grid item xs={12} md={8} lg={12}>
+      <Grid item xs={12}>
         <MaterialTable
           icons={tableIcons}
           title="Messages"

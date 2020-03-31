@@ -101,7 +101,7 @@ export default function Layout({ children }) {
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer}/>
-        <Container maxWidth="lg" className={classes.container}>
+        <Container maxWidth="100%" className={classes.container}>
           {children}
         </Container>
         <Copyright/>
