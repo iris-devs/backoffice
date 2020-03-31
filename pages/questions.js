@@ -3,7 +3,7 @@ import MaterialTable from 'material-table'
 import React from 'react'
 import { useQuestionSubscription } from '../hooks'
 import { useAuth } from '../hooks/auth'
-import { dateFromFirebase } from '../src/dateFormatter'
+import { dateFromFirebase } from '../src/utils/date'
 import AnswerForm from '../src/Question/AnswerForm'
 import tableIcons from '../src/tableIcons'
 
