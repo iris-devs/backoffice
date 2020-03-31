@@ -1,5 +1,4 @@
 import AppBar from '@material-ui/core/AppBar'
-import Badge from '@material-ui/core/Badge'
 import Button from '@material-ui/core/Button'
 import Container from '@material-ui/core/Container'
 import Divider from '@material-ui/core/Divider'
@@ -11,7 +10,6 @@ import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import MenuIcon from '@material-ui/icons/Menu'
-import NotificationsIcon from '@material-ui/icons/Notifications'
 import clsx from 'clsx'
 import firebase from 'firebase'
 import { useRouter } from 'next/router'
@@ -34,8 +32,8 @@ export default function Layout({ children }) {
   const router = useRouter()
   const { user } = useAuth()
 
-  const currentRoute = router.pathname;
-  const title = MENU_ITEMS.find(({ route }) => route === currentRoute)?.title;
+  const currentRoute = router.pathname
+  const title = MENU_ITEMS.find(({ route }) => route === currentRoute)?.title
 
   const classes = useStyles()
   const [isDrawerOpen, { toggle: drawerToggle }] = useToggle(true)
