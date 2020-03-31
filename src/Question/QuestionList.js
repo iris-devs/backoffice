@@ -43,9 +43,8 @@ export default ({ dataSource }) => {
           </TableHead>
           <TableBody>
             {dataSource.map(({ id, title, authorName, createdAt, likes, comment, body }) => (
-              <>
-                {/*{true && (*/}
-                <TableRow key={id}>
+              <React.Fragment key={id}>
+                <TableRow>
                   <TableCell>
                     <IconButton
                       size="small"
@@ -67,9 +66,8 @@ export default ({ dataSource }) => {
                   </TableCell>
                   <TableCell/>
                 </TableRow>
-                {/*)}*/}
                 {expanded === id && (
-                  <TableRow key={id + '-body'} style={{ backgroundColor: '#fafafa' }}>
+                  <TableRow style={{ backgroundColor: '#fafafa' }}>
                     <TableCell colSpan={6}>
                       <div>{body}</div>
                       <AnswerForm
@@ -80,7 +78,7 @@ export default ({ dataSource }) => {
                     </TableCell>
                   </TableRow>
                 )}
-              </>
+              </React.Fragment>
             ))}
           </TableBody>
         </Table>
