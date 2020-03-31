@@ -14,10 +14,14 @@ export const useQuestionSubscription = (roles = []) => {
   const reply = async (questionId, { body, authorName, uid }) => {
     const questionRef = await getCollectionRef('questions').doc(questionId)
     const question = await questionRef.get()
-    const comment = { uid, body, authorName }
+    let comment = { uid, body, authorName, createdAt: firebase.firestore.FieldValue.serverTimestamp() }
 
-    if (!question?.comment?.createdAt) {
-      comment.createdAt = firebase.firestore.FieldValue.serverTimestamp()
+    const questionData = question.data();
+    if (questionData?.comment) {
+      comment = {
+        ...questionData.comment,
+        body
+      }
     }
 
     await questionRef.set({ comment }, { merge: true })
