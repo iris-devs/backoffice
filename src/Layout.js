@@ -16,6 +16,7 @@ import clsx from 'clsx'
 import firebase from 'firebase'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
+import { useAuth } from '../hooks/auth'
 import Copyright from './Copyright'
 import { MainMenu, MENU_ITEMS } from './MainMenu'
 
@@ -31,6 +32,8 @@ const useToggle = (initialValue = false) => {
 
 export default function Layout({ children }) {
   const router = useRouter()
+  const { user } = useAuth()
+
   const currentRoute = router.pathname;
   const title = MENU_ITEMS.find(({ route }) => route === currentRoute)?.title;
 
@@ -74,11 +77,7 @@ export default function Layout({ children }) {
           >
             {title ?? 'Dashboard'}
           </Typography>
-          <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon/>
-            </Badge>
-          </IconButton>
+          <span>{user?.fullName} (roles: {(user?.roles ?? []).join(', ')})</span>
           <Button
             variant="contained"
             className={classes.signOut}
@@ -101,8 +100,6 @@ export default function Layout({ children }) {
         <List>
           <MainMenu/>
         </List>
-        {/*<Divider/>*/}
-        {/*<List>{secondaryListItems}</List>*/}
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer}/>
