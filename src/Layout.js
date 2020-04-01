@@ -101,7 +101,7 @@ export default function Layout({ children }) {
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer}/>
-        <Container maxWidth="lg" className={classes.container}>
+        <Container maxWidth="100%" className={classes.container}>
           {children}
         </Container>
         <Copyright/>
@@ -181,14 +181,5 @@ const useStyles = makeStyles(theme => ({
   container: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
-  },
-  paper: {
-    padding: theme.spacing(2),
-    display: 'flex',
-    overflow: 'auto',
-    flexDirection: 'column',
-  },
-  fixedHeight: {
-    height: 240,
-  },
+  }
 }))
