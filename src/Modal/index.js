@@ -1,7 +1,7 @@
 import Modal from "./Modal"
-import PostEditModal from "./PostEditModal"
+import PostModal from "./PostModal"
 
 export {
   Modal,
-  PostEditModal
+  PostModal
 }

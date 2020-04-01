@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import {makeStyles} from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
 import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
@@ -9,8 +9,9 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Button from "@material-ui/core/Button";
-import { useManageTopics } from "../../hooks";
+import {useManageTopics} from "../../hooks";
 import MarkdownEditor from "../MarkdownEditor";
+import AddIcon from '@material-ui/icons/Add';
 
 function getModalStyle() {
   const top = 50;
@@ -34,17 +35,16 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function PostEditModal({ topic, user }) {
+export default function PostModal({topic, user, mode}) {
   const classes = useStyles();
-  // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = React.useState(getModalStyle);
   const [open, setOpen] = React.useState(false);
-  const [title, setTitle] = React.useState(topic.title);
-  const [text, setText] = React.useState(topic.text);
-  const [isPublished, setIsPublished] = React.useState(topic.isPublished);
-  const [summary, setSummary] = React.useState(topic.summary);
+  const [title, setTitle] = React.useState(topic.title || '');
+  const [text, setText] = React.useState(topic.text || '');
+  const [isPublished, setIsPublished] = React.useState(topic.isPublished || true);
+  const [summary, setSummary] = React.useState(topic.summary || '');
   const [type, setType] = React.useState(topic.type || "info");
-  const { updateTopic } = useManageTopics(user);
+  const {updateTopic, createTopic} = useManageTopics(user);
 
   const handleOpen = () => {
     setOpen(true);
@@ -56,38 +56,58 @@ export default function PostEditModal({ topic, user }) {
 
   const submitTopic = e => {
     e.preventDefault();
-    console.log(`Updating topic: ${title}, ${text}, ${isPublished}`);
-    updateTopic(topic.key, title, text, isPublished, summary, type);
+    if (mode === 'create') {
+      createTopic(text, title, user.fullName, isPublished, summary, type)
+    } else {
+      updateTopic(topic.key, title, text, isPublished, summary, type);
+    }
     handleClose();
+  };
+
+  let modalSubmitText = 'Update post';
+  let modalIcon = (
+      <IconButton aria-label="edit" className={classes.margin} onClick={handleOpen}>
+        <EditIcon fontSize="small"/>
+      </IconButton>
+  );
+
+  if (mode === 'create') {
+    modalIcon = (
+        <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            className={classes.button}
+            startIcon={<AddIcon/>}
+            onClick={handleOpen}
+        >
+          New message
+        </Button>
+    );
+    modalSubmitText = 'Create post';
   }
 
   return (
-    <div>
-      <IconButton
-        aria-label="delete"
-        className={classes.margin}
-        onClick={handleOpen}
-      >
-        <EditIcon fontSize="small" />
-      </IconButton>
-      <Modal
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
-        open={open}
-        onClose={handleClose}
-      >
-        <div style={modalStyle} className={classes.paper}>
-          <h2 id="simple-modal-title">Edit Mode:</h2>
-          <form onSubmit={submitTopic}>
-            <TextField
-              id="post-title"
-              label="Title"
-              fullWidth={true}
-              style={{ marginBottom: 40 }}
-              onChange={e => setTitle(e.target.value)}
-              value={title}
-            />
-            <TextField
+      <>
+        {modalIcon}
+        <Modal
+            aria-labelledby="simple-modal-title"
+            aria-describedby="simple-modal-description"
+            open={open}
+            onClose={handleClose}
+        >
+          <div style={modalStyle} className={classes.paper}>
+            <h2 id="simple-modal-title">{modalSubmitText}:</h2>
+            <form onSubmit={submitTopic}>
+              <TextField
+                  id="post-title"
+                  label="Title"
+                  fullWidth={true}
+                  style={{marginBottom: 40}}
+                  onChange={e => setTitle(e.target.value)}
+                  value={title}
+              />
+              <TextField
               id="post-summary"
               label="Summary"
               multiline
@@ -133,12 +153,12 @@ export default function PostEditModal({ topic, user }) {
 
             <div style={{ display: "flex", alignItems: "right" }}>
               <Button type="submit" variant="outlined" color="primary">
-                Update post
+                {modalSubmitText}
               </Button>
             </div>
           </form>
         </div>
       </Modal>
-    </div>
+      </>
   );
 }
