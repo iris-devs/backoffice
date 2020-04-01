@@ -54,10 +54,19 @@ export default function PostModal({topic, user, mode}) {
     setOpen(false);
   };
 
+  const clearState = () => {
+    setTitle('');
+    setText('');
+    setSummary('');
+    setIsPublished(true);
+    setType('info');
+  }
+
   const submitTopic = e => {
     e.preventDefault();
     if (mode === 'create') {
-      createTopic(text, title, user.fullName, isPublished, summary, type)
+      createTopic(text, title, user.fullName, isPublished, summary, type);
+      clearState();
     } else {
       updateTopic(topic.key, title, text, isPublished, summary, type);
     }
