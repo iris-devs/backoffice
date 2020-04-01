@@ -5,18 +5,18 @@ import Divider from '@material-ui/core/Divider'
 import Drawer from '@material-ui/core/Drawer'
 import IconButton from '@material-ui/core/IconButton'
 import List from '@material-ui/core/List'
-import { makeStyles } from '@material-ui/core/styles'
+import {makeStyles} from '@material-ui/core/styles'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import MenuIcon from '@material-ui/icons/Menu'
 import clsx from 'clsx'
 import firebase from 'firebase'
-import { useRouter } from 'next/router'
-import React, { useState } from 'react'
-import { useAuth } from '../hooks/auth'
+import {useRouter} from 'next/router'
+import React, {useState} from 'react'
+import {useAuth} from '../hooks/auth'
 import Copyright from './Copyright'
-import { MainMenu, MENU_ITEMS } from './MainMenu'
+import {MainMenu, MENU_ITEMS} from './MainMenu'
 
 const useToggle = (initialValue = false) => {
   const [value, setValue] = useState(initialValue)
@@ -101,7 +101,7 @@ export default function Layout({ children }) {
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer}/>
-        <Container maxWidth="100%" className={classes.container}>
+        <Container maxWidth="xl" className={classes.container}>
           {children}
         </Container>
         <Copyright/>

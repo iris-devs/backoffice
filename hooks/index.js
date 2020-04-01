@@ -9,15 +9,15 @@ function getCollectionRef(name) {
 }
 
 export const useQuestionSubscription = (user) => {
-  const roles = user?.roles ?? []
-  const [questions, setQuestions] = useState([])
+  const roles = user?.roles ?? [];
+  const [questions, setQuestions] = useState([]);
 
   const reply = async (questionId, { body, authorName, uid }) => {
-    const questionRef = await getCollectionRef('questions').doc(questionId)
-    const question = await questionRef.get()
-    let comment = { uid, body, authorName, createdAt: firebase.firestore.FieldValue.serverTimestamp() }
+    const questionRef = await getCollectionRef('questions').doc(questionId);
+    const question = await questionRef.get();
+    let comment = { uid, body, authorName, createdAt: firebase.firestore.FieldValue.serverTimestamp() };
 
-    const questionData = question.data()
+    const questionData = question.data();
     if (questionData?.comment) {
       comment = {
         ...questionData.comment,
@@ -26,7 +26,7 @@ export const useQuestionSubscription = (user) => {
     }
 
     await questionRef.set({ comment }, { merge: true })
-  }
+  };
 
   useEffect(() => {
     if (!roles.length) {
@@ -36,58 +36,21 @@ export const useQuestionSubscription = (user) => {
     return getCollectionRef('questions')
       .where('roles', 'array-contains-any', roles)
       .onSnapshot(querySnapshot => {
-          const messages = {}
-          querySnapshot.forEach(function (doc) {
-            messages[doc.id] = doc.data()
-          })
-          if (messages) setQuestions(messages)
+          const questions = querySnapshot.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id
+          }));
+          if (questions) setQuestions(questions)
         },
         error => console.error(error),
       )
-  }, [roles])
+  }, [roles]);
 
   return { questions, reply }
-}
-
-export const useCommentsSubscription = id => {
-  const [comments, setComments] = useState([])
-  if (!id) {
-    setComments([])
-  }
-
-  useEffect(() => {
-    // listen for auth state changes
-    let unsubscribe = getCollectionRef('comments')
-      .where('parentId', '==', id)
-      .orderBy('up', 'desc')
-      .onSnapshot(
-        snapshot => {
-          if (snapshot.empty) {
-            console.log('No matching documents.')
-            return
-          }
-          const messages = {}
-          snapshot.forEach(function (doc) {
-            messages[doc.id] = doc.data()
-          })
-          if (messages) setComments(messages)
-        },
-        err => {
-          console.log('Error getting documents', err)
-          typeof unsubscribe === 'function' && unsubscribe()
-        },
-      )
-    // unsubscribe to the listener when unmounting
-    return () => typeof unsubscribe === 'function' && unsubscribe()
-  }, [])
-
-  return {
-    comments,
-  }
-}
+};
 
 export const useTopicSubscription = id => {
-  const [topic, setTopic] = useState('')
+  const [topic, setTopic] = useState('');
   if (!id) {
     setTopic('')
   }
@@ -99,27 +62,27 @@ export const useTopicSubscription = id => {
       .get()
       .then(snapshot => {
         if (snapshot.empty) {
-          console.log('No matching documents.')
+          console.log('No matching documents.');
           return
         }
 
         setTopic(snapshot.data())
       })
       .catch(err => {
-        console.log('Error getting documents', err)
+        console.log('Error getting documents', err);
         typeof unsubscribe === 'function' && unsubscribe()
-      })
+      });
     // unsubscribe to the listener when unmounting
     return () => typeof unsubscribe === 'function' && unsubscribe()
-  }, [])
+  }, []);
 
   return {
     topic,
   }
-}
+};
 
 export const useManageTopics = user => {
-  const [messages, setMessages] = useState([])
+  const [messages, setMessages] = useState([]);
   const createTopic = async (text, title, authorName, isPublished = true, summary, type) => {
     return await getCollectionRef('messages').add({
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -133,21 +96,21 @@ export const useManageTopics = user => {
       isPublished,
       isDeleted: false,
     })
-  }
+  };
 
   const deleteTopic = async id => {
     return await getCollectionRef('messages')
       .doc(`${id}`)
       .update({ isDeleted: true, isPublished: false })
-  }
+  };
 
   const updateTopic = async (id, title, text, isPublished = true, summary, type) => {
     return await getCollectionRef('messages')
       .doc(`${id}`)
       .update({ title, text, isPublished, summary, type })
-  }
+  };
 
-  const roles = user?.roles ?? []
+  const roles = user?.roles ?? [];
   useEffect(() => {
     if (!roles.length) {
       return
@@ -156,10 +119,10 @@ export const useManageTopics = user => {
     return getCollectionRef('messages')
       .where('roles', 'array-contains-any', roles)
       .onSnapshot(querySnapshot => {
-          const messages = querySnapshot.docs.reduce((result, doc) => ({
-            ...result,
-            [doc.id]: doc.data(),
-          }), {})
+          const messages = querySnapshot.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id
+          }));
 
           if (messages) {
             setMessages(messages)
@@ -167,7 +130,7 @@ export const useManageTopics = user => {
         },
         error => console.error(error),
       )
-  }, [roles])
+  }, [roles]);
 
   return {
     createTopic,
@@ -175,5 +138,5 @@ export const useManageTopics = user => {
     deleteTopic,
     updateTopic,
   }
-}
+};
 
