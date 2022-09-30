@@ -19,7 +19,7 @@
     "react": "latest",
     "react-dom": "latest",
     "react-mde": "^8.2.0",
-    "recharts": "^1.8.5",
+    "recharts": "^2.1.14",
     "showdown": "^1.9.1"
   },
   "scripts": {
